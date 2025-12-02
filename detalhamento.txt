@@ -1,0 +1,154 @@
+disclaimer: faltei na aula que o professor deu uma iniciada no projeto então muita coisa foi vista no stack overflow, videoaulas que encontrei no youtube afora e meu primo que trabalha com php tem alguns bons anos.
+Além disso não fiz sessão no projeto porque (por falta de atenção) só percebi a falta dps de ter praticamente finalizado, e ia dar um bom trabalho e nesse fim de semestre tem outros trabalhos pra finalizar.
+------------------------
+
+# APRESENTAÇÃO DO PROJETO - CRUD DE USUÁRIOS EM PHP
+
+---
+
+## conexao.php
+
+Este é o arquivo de configuração do banco de dados. Ele define constantes usando a função define() do PHP, que cria valores fixos que não podem ser alterados durante a execução do script.
+
+**mysqli_connect()** é a função que estabelece conexão com o banco MySQL. Ela recebe 4 parâmetros: servidor (127.0.0.1 que é localhost), usuário (root), senha (admin) e nome do banco (php). O "or die()" após a conexão significa que se falhar, o script para e exibe a mensagem de erro.
+
+A variável $conexao armazena essa conexão e será usada em todos os outros arquivos através do comando require.
+
+---
+
+## navbar.php
+
+Componente de navegação simples que contém apenas uma barra escura do Bootstrap. Este arquivo é incluído em todas as páginas usando **include**, que literalmente copia o conteúdo deste arquivo para dentro do outro. É uma forma de reaproveitar código e manter consistência visual.
+
+O href "navbar-brand" aparenta ter um erro - deveria ser class="navbar-brand" para funcionar corretamente como link da marca.
+
+---
+
+## mensagem.php
+
+Sistema de feedback para o usuário. Usa **$_SESSION** que é um array global do PHP que mantém dados entre diferentes páginas durante a navegação do usuário.
+
+**isset()** verifica se uma variável existe e não é null. Se existir mensagem na sessão, ela é exibida em um alert do Bootstrap.
+
+**unset()** remove a variável da sessão após exibir, garantindo que a mensagem apareça apenas uma vez. Sem isso, a mensagem ficaria aparecendo em todas as páginas.
+
+---
+
+## index.php
+
+Página principal do sistema.
+
+**session_start()** deve ser chamado no início de qualquer página que use sessões. Ele inicializa ou retoma uma sessão existente.
+
+**require** é similar ao include, mas gera erro fatal se o arquivo não for encontrado (include apenas avisa).
+
+**mysqli_real_escape_string()** é CRUCIAL para segurança. Ela "escapa" caracteres especiais que poderiam ser usados em SQL Injection (tipo de ataque hacker). Por exemplo, transforma aspas simples em algo seguro.
+
+**htmlspecialchars()** converte caracteres especiais HTML em entidades, prevenindo XSS (Cross-Site Scripting). Por exemplo, < vira &lt;
+
+**mysqli_query()** executa uma consulta SQL no banco de dados e retorna o resultado.
+
+**mysqli_num_rows()** conta quantas linhas foram retornadas pela consulta.
+
+O código usa **$_GET** que captura dados da URL (exemplo: index.php?busca=joao). É um array associativo onde a chave é o nome do parâmetro.
+
+O operador **?=** é atalho para **<?php echo**, usado para imprimir valores rapidamente.
+
+O loop **foreach** percorre cada registro retornado do banco, criando uma linha na tabela para cada usuário.
+
+---
+
+## usuario-create.php
+
+Formulário simples de cadastro.
+
+O atributo **method="POST"** no formulário indica que os dados serão enviados de forma oculta (não aparecem na URL como no GET). POST é usado para operações que modificam dados.
+
+**name** nos inputs é fundamental - é através desse nome que o PHP identifica cada campo usando $_POST['nome'].
+
+**action="acoes.php"** define para onde os dados do formulário serão enviados ao clicar em Salvar.
+
+---
+
+## usuario-view.php
+
+Página de visualização de detalhes.
+
+**$_GET['id']** captura o ID passado na URL (exemplo: usuario-view.php?id=5).
+
+**mysqli_fetch_array()** converte o resultado da query em um array PHP que pode ser acessado. Transforma os dados do banco em algo que o PHP consegue manipular facilmente.
+
+**mysqli_num_rows()** verifica se encontrou algum registro. Se retornar 0, significa que não existe usuário com aquele ID.
+
+---
+
+## usuario-edit.php
+
+Similar ao usuario-view.php, mas com formulários editáveis.
+
+O **input type="hidden"** com o usuario_id é essencial - ele carrega o ID do usuário de forma invisível no formulário. Quando o formulário é enviado, o PHP sabe qual registro atualizar.
+
+O atributo **value** nos inputs preenche os campos com os dados atuais do banco, permitindo que o usuário veja o que está editando.
+
+---
+
+## acoes.php
+
+O "coração" do sistema - processa todas as operações.
+
+**trim()** remove espaços em branco no início e fim do texto. Evita que alguém cadastre "  João  " em vez de "João".
+
+**mysqli_affected_rows()** retorna quantas linhas foram modificadas pela última query. Se for maior que 0, significa que a operação teve sucesso.
+
+**header("Location: index.php")** redireciona o navegador para outra página. Deve ser chamado antes de qualquer HTML ser enviado ao navegador.
+
+O código usa **$_POST** para receber dados de formulários. É um array associativo onde as chaves correspondem aos atributos "name" dos inputs.
+
+**ATENÇÃO:** A query UPDATE tem um erro - falta espaço antes do WHERE, o que pode causar erro SQL. Deveria ser: $sql .= " WHERE id = '$usuario_id'";
+
+---
+
+## login.php
+
+Sistema de autenticação básico.
+
+**$_SERVER['REQUEST_METHOD']** verifica qual método HTTP foi usado. Se for POST, significa que o formulário foi enviado. Se for GET, é apenas visualização da página.
+
+A query SELECT busca um usuário que tenha EXATAMENTE o nome E email informados. Se encontrar, cria variáveis de sessão para "lembrar" que o usuário está logado.
+
+**exit()** após header() é boa prática - garante que nenhum código adicional seja executado após o redirecionamento.
+
+**IMPORTANTE:** Este sistema tem falha de segurança - não usa hash de senha. Em produção, deveria usar password_hash() e password_verify().
+
+---
+
+## register.php
+
+Cadastro de novos usuários.
+
+Primeiro faz **verificação de duplicidade** - busca no banco se já existe alguém com aquele email. Isso previne cadastros duplicados.
+
+**mysqli_num_rows($resultado) > 0** significa que encontrou registro - logo, email já está em uso.
+
+Se não encontrar, executa o INSERT para criar novo usuário.
+
+O fluxo é: verifica → se existe, avisa → se não existe, cadastra → redireciona para login.
+
+---
+
+## CONCEITOS IMPORTANTES EXPLICADOS:
+
+**MySQLi (MySQL Improved):**
+É uma extensão do PHP para trabalhar com banco MySQL. Oferece mais recursos e segurança que a antiga extensão mysql (descontinuada). Existem duas formas de usar: procedural (como neste projeto) e orientada a objetos.
+
+**SQL Injection:**
+Tipo de ataque onde o hacker insere código SQL malicioso através de formulários. Por isso o mysqli_real_escape_string() é essencial.
+
+**Sessions:**
+Mecanismo do PHP para manter informações do usuário entre diferentes páginas. O servidor cria um ID único e guarda na memória ou arquivo. O navegador recebe um cookie com esse ID.
+
+**Sanitização de dados:**
+Processo de limpar e validar informações vindas do usuário antes de usar no banco. Previne ataques e erros.
+
+**GET vs POST:**
+GET envia dados na URL (visíveis, limitados). POST envia no corpo da requisição (ocultos, sem limite prático). Use GET para buscar/filtrar, POST para criar/modificar.

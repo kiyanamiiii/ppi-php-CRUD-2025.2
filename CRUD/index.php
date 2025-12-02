@@ -24,10 +24,21 @@ session_start();
           <div class="card-header">
             <h4>
               Lista de Usuarios
-              <a href="usuario-create.php" class="btn btn-primary float-end">Adicionar Usúario</a>
+              <a href="usuario-create.php" class="btn btn-primary float-end">Adicionar Usuário</a>
             </h4>
           </div>
           <div class="card-body">
+            <form method="GET" action="" class="mb-3">
+              <div class="input-group">
+                <input class="form-control" type="search" name="busca" placeholder="Buscar por nome"
+                  value="<?= isset($_GET['busca']) ? $_GET['busca'] : '' ?>">
+                <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                <?php if (isset($_GET['busca']) && $_GET['busca'] != ''): ?>
+                  <a href="index.php" class="btn btn-outline-secondary">Limpar</a>
+                <?php endif; ?>
+              </div>
+            </form>
+
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
@@ -39,8 +50,16 @@ session_start();
               </thead>
               <tbody>
                 <?php
-                $sql = 'SELECT * FROM usuarios';
+                if (isset($_GET['busca']) && $_GET['busca'] != '') {
+                  $busca = mysqli_real_escape_string($conexao, $_GET['busca']);
+                  $sql = "SELECT * FROM usuarios WHERE nome LIKE '%$busca%'";
+                }
+                else {
+                  $sql = 'SELECT * FROM usuarios';
+                }
+
                 $usuarios = mysqli_query($conexao, $sql);
+
                 if (mysqli_num_rows($usuarios) > 0) {
                   foreach ($usuarios as $usuario) {
                     ?>
@@ -63,7 +82,12 @@ session_start();
                   }
                 }
                 else {
-                  echo '<h5>Nenhum usuário encontrado.</h5>';
+                  if (isset($_GET['busca']) && $_GET['busca'] != '') {
+                    echo '<tr><td colspan="4" class="text-center">Nenhum usuário encontrado com esse nome.</td></tr>';
+                  }
+                  else {
+                    echo '<tr><td colspan="4" class="text-center">Nenhum usuário cadastrado.</td></tr>';
+                  }
                 }
                 ?>
               </tbody>
