@@ -1,6 +1,5 @@
 <?php
-
-session_start();
+require 'verificar_sessao.php';
 require 'conexao.php';
 
 if (isset($_POST['create_usuario'])) {
@@ -27,7 +26,7 @@ if (isset($_POST['update_usuario'])) {
   $nome = mysqli_real_escape_string($conexao, trim($_POST['nome']));
   $email = mysqli_real_escape_string($conexao, trim($_POST['email']));
 
-  $sql = "UPDATE usuarios SET nome = '$nome', email='$email'";
+  $sql = "UPDATE usuarios SET nome = '$nome', email='$email' ";
 
   $sql .= "WHERE id = '$usuario_id'";
 

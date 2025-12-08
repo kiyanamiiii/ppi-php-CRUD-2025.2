@@ -1,4 +1,5 @@
 <?php
+require 'verificar_sessao.php';
 require 'conexao.php';
 ?>
 
@@ -28,11 +29,11 @@ require 'conexao.php';
                         <form action="acoes.php" method="POST">
                             <div class="mb-3">
                                 <label for="">Nome</label>
-                                <input type="text" name="nome" class="form-control" id="">
+                                <input type="text" name="nome" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label for="">Email</label>
-                                <input type="email" name="email" class="form-control" id="">
+                                <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <button type="submit" name="create_usuario" class="btn btn-primary">Salvar </button>

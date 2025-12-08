@@ -1,0 +1,9 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+  $_SESSION['mensagem'] = "Você precisa estar logado para acessar esta página.";
+  header("Location: login.php");
+  exit();
+}
+?>

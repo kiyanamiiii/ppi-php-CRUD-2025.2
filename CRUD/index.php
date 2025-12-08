@@ -1,6 +1,6 @@
 <?php
+require 'verificar_sessao.php';
 require 'conexao.php';
-session_start();
 ?>
 
 <!DOCTYPE html>

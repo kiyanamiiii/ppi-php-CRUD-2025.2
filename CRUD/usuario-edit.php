@@ -1,4 +1,5 @@
 <?php
+require 'verificar_sessao.php';
 require 'conexao.php';
 ?>
 
@@ -38,11 +39,13 @@ require 'conexao.php';
                                 <input type="hidden" name="usuario_id" value="<?= $usuario['id'] ?>">
                                 <div class="mb-3">
                                     <label for="">Nome</label>
-                                    <input type="text" name="nome" class="form-control" value="<?= $usuario['nome'] ?>">
+                                    <input type="text" name="nome" class="form-control" value="<?= $usuario['nome'] ?>"
+                                        required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="">Email</label>
-                                    <input type="email" name="email" class="form-control" value="<?= $usuario['email'] ?>">
+                                    <input type="email" name="email" class="form-control" value="<?= $usuario['email'] ?>"
+                                        required>
                                 </div>
                                 <div class="mb-3">
                                     <button type="submit" name="update_usuario" class="btn btn-primary">Salvar </button>

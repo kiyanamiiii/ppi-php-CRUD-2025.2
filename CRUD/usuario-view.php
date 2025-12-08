@@ -1,4 +1,5 @@
 <?php
+require 'verificar_sessao.php';
 require 'conexao.php';
 ?>
 
