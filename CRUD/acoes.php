@@ -1,5 +1,5 @@
 <?php
-require 'verificar_sessao.php';
+require 'verificar-sessao.php';
 require 'conexao.php';
 
 if (isset($_POST['create_usuario'])) {
